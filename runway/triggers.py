@@ -20,6 +20,8 @@ class Trigger(ABC):
 
 class ShellTrigger(Trigger):
     def __init__(self, command: str) -> None:
+        if not command or not command.strip():
+            raise ValueError("ShellTrigger command must not be empty")
         self._command = command
 
     def deploy(self) -> DeployResult:
@@ -43,7 +45,7 @@ def get_trigger(trigger_config: dict) -> Trigger:
     trigger_type = trigger_config.get("type")
     if trigger_type == "shell":
         command = trigger_config.get("command")
-        if not command:
-            raise ValueError("ShellTrigger requires 'command' in trigger config")
+        if not command or not command.strip():
+            raise ValueError("ShellTrigger requires a non-empty 'command' in trigger config")
         return ShellTrigger(command)
     raise ValueError(f"Unknown trigger type {trigger_type!r}. Only 'shell' is supported in v0.1.")

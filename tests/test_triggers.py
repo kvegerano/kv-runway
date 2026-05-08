@@ -54,5 +54,10 @@ def test_get_trigger_unknown_raises():
 
 
 def test_get_trigger_missing_command_raises():
-    with pytest.raises(ValueError, match="requires 'command'"):
+    with pytest.raises(ValueError, match="non-empty 'command'"):
         get_trigger({"type": "shell"})
+
+
+def test_shell_trigger_whitespace_command_raises():
+    with pytest.raises(ValueError, match="must not be empty"):
+        ShellTrigger("   ")
