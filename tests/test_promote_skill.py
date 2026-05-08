@@ -104,3 +104,16 @@ def test_promote_in_process_failure():
         with pytest.raises(SystemExit) as exc_info:
             mod._promote_in_process("local", "preview", pathlib.Path("."))
     assert exc_info.value.code == 1
+
+
+def test_promote_via_router_network_error(monkeypatch, capsys):
+    """httpx.RequestError (e.g. connection refused) exits 1 with message."""
+    import httpx
+    monkeypatch.setenv("RUNWAY_DASHBOARD_URL", "http://localhost:8000")
+    monkeypatch.setenv("RUNWAY_DASHBOARD_TOKEN", "test-token")
+    with patch("httpx.post", side_effect=httpx.ConnectError("connection refused")):
+        with pytest.raises(SystemExit) as exc_info:
+            mod.main(["prog", "local", "preview"])
+        assert exc_info.value.code == 1
+    captured = capsys.readouterr()
+    assert "Failed to reach runway router" in captured.err

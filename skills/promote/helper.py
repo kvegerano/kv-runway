@@ -90,6 +90,12 @@ def main(argv: list[str] | None = None) -> None:
     print(f"Promoting: {from_env} → {to_env}")
 
     if dashboard_url:
+        if not dashboard_token:
+            print(
+                "Warning: RUNWAY_DASHBOARD_URL is set but RUNWAY_DASHBOARD_TOKEN is empty. "
+                "The router will likely return 401.",
+                file=sys.stderr,
+            )
         _promote_via_router(from_env, to_env, dashboard_url, dashboard_token)
     else:
         project_root = Path(os.environ.get("RUNWAY_PROJECT_ROOT", ".")).resolve()
