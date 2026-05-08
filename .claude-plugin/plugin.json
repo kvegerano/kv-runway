@@ -1,0 +1,14 @@
+{
+  "name": "kv-runway",
+  "version": "0.1.0",
+  "description": "Deployment/promotion/environments engine for Claude Code",
+  "author": {
+    "name": "Kristian Vegerano",
+    "url": "https://github.com/kvegerano"
+  },
+  "license": "MIT",
+  "skills": [],
+  "commands": [],
+  "hooks": [],
+  "rules": []
+}

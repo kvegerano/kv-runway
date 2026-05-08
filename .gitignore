@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.runway/*.lock
+.runway/*.tmp
+dist/
+*.egg-info/
+.eggs/
+build/
+.venv/
+*.so
+.env
+.env.*
+.env*.local

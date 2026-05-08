@@ -1,0 +1,6 @@
+{
+  "name": "kv-runway",
+  "metadata": {"description": "Deployment/promotion/environments engine for Claude Code"},
+  "owner": {"name": "Kristian Vegerano", "url": "https://github.com/kvegerano"},
+  "plugins": [{"name": "kv-runway", "description": "Promotion engine skills for consumer projects", "source": "./", "category": "productivity"}]
+}
