@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from runway.config import ConfigError, RunwayConfig, get_environment, load_environments, load_runway_config
+from runway.config import ConfigError, RunwayConfig, get_environment, get_promotion_chain, load_environments, load_runway_config
 from runway.schemas import EnvironmentConfig, EnvironmentType
 
 # ---------------------------------------------------------------------------
@@ -131,3 +131,34 @@ def test_get_environment_not_found(tmp_path: Path) -> None:
     config = load_environments(project_root)
     with pytest.raises(ConfigError, match="not found"):
         get_environment(config, "nonexistent")
+
+
+# ---------------------------------------------------------------------------
+# get_promotion_chain
+# ---------------------------------------------------------------------------
+
+
+def test_get_promotion_chain(tmp_path: Path) -> None:
+    project_root = _write_environments(tmp_path, VALID_CONFIG)
+    config = load_environments(project_root)
+    source, target = get_promotion_chain(config, "local", "staging")
+    assert source.name == "local"
+    assert target.name == "staging"
+
+
+# ---------------------------------------------------------------------------
+# load_runway_config — error handling
+# ---------------------------------------------------------------------------
+
+
+def test_load_runway_config_invalid_yaml(tmp_path: Path) -> None:
+    (tmp_path / "runway.yaml").write_text("key: [unclosed", encoding="utf-8")
+    with pytest.raises(ConfigError, match="not valid YAML"):
+        load_runway_config(tmp_path)
+
+
+def test_load_runway_config_empty_file(tmp_path: Path) -> None:
+    (tmp_path / "runway.yaml").write_text("", encoding="utf-8")
+    cfg = load_runway_config(tmp_path)
+    assert isinstance(cfg, RunwayConfig)
+    assert cfg.state_dir == ".runway"

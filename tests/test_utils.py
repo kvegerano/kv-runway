@@ -29,3 +29,7 @@ def test_scrub_bearer_token() -> None:
 def test_scrub_clean_string_unchanged() -> None:
     text = "Promotion started for staging environment, step: preflight"
     assert scrub_secrets(text) == text
+
+
+def test_scrub_empty_string() -> None:
+    assert scrub_secrets("") == ""

@@ -66,6 +66,8 @@ def scrub_secrets(text: str) -> str:
         A copy of ``text`` with known secret patterns replaced by their
         ``<REDACTED:TYPE>`` placeholders.
     """
+    if not text:
+        return text or ""
     for pattern, replacement in _SECRET_PATTERNS:
         text = pattern.sub(replacement, text)
     return text

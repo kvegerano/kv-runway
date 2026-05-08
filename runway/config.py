@@ -99,12 +99,23 @@ def load_runway_config(project_root: Path) -> RunwayConfig:
         print(f"Warning: runway.yaml not found at {config_path}; using defaults.", file=sys.stderr)
         return RunwayConfig()
 
-    data = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+    try:
+        raw = config_path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise ConfigError(f"Cannot read runway.yaml: {exc}") from exc
+
+    try:
+        data = yaml.safe_load(raw)
+    except yaml.YAMLError as exc:
+        raise ConfigError(f"runway.yaml is not valid YAML: {exc}") from exc
+
+    if data is None:
+        data = {}
 
     try:
         return RunwayConfig.model_validate(data)
     except ValidationError as exc:
-        raise ConfigError(f"runway.yaml validation failed: {exc}") from exc
+        raise ConfigError(f"runway.yaml schema validation failed: {exc}") from exc
 
 
 # ---------------------------------------------------------------------------
@@ -165,3 +176,12 @@ def get_environment(config: EnvironmentConfig, name: str) -> Environment:
     raise ConfigError(
         f"Environment {name!r} not found. Available: {[e.name for e in config.environments]}"
     )
+
+
+def get_promotion_chain(
+    config: EnvironmentConfig, from_env: str, to_env: str
+) -> tuple[Environment, Environment]:
+    """Return the source and target environments for a promotion."""
+    source = get_environment(config, from_env)
+    target = get_environment(config, to_env)
+    return source, target
