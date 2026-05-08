@@ -14,9 +14,9 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
-from runway.config import get_environment, get_promotion_chain, load_environments
+from runway.config import get_environment, load_environments
 from runway.gates import run_gate
-from runway.schemas import GateType, PromotionRecord
+from runway.schemas import PromotionRecord
 from runway.state import (
     acquire_lock,
     commit_promotion,
@@ -24,7 +24,7 @@ from runway.state import (
     release_lock,
     update_step,
 )
-from runway.triggers import ShellTrigger, get_trigger
+from runway.triggers import get_trigger
 
 logger = logging.getLogger(__name__)
 
@@ -70,11 +70,10 @@ class PromotionEngine:
 
         try:
             # ② RUN GATES
-            import runway.state as state_module
             for gate in env.gates:
                 step_name = f"gate:{gate.type.value}"
                 update_step(self._project_root, to_env, step_name)
-                gate_result = run_gate(gate, to_env, self._project_root, state_module)
+                gate_result = run_gate(gate, to_env, self._project_root)
                 if not gate_result.passed:
                     return self._fail(to_env, promotion_id, step_name, start_time, gate_result.reason)
 
