@@ -47,8 +47,8 @@ def create_runway_router(
         try:
             config = load_environments(project_root)
             get_environment(config, name)
-        except ConfigError:
-            raise HTTPException(status_code=404, detail=f"Environment {name!r} not found")
+        except ConfigError as exc:
+            raise HTTPException(status_code=404, detail=f"Environment {name!r} not found") from exc
         state = read_state(project_root)
         entry = state.get(name)
         return {

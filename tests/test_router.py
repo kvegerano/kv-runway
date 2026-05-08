@@ -112,3 +112,16 @@ def test_get_environment_detail_422_invalid_name(tmp_path):
     client = _make_client(tmp_path)
     resp = client.get("/api/admin/runway/environments/INVALID_NAME")
     assert resp.status_code == 422
+
+
+def test_health_bypasses_real_auth(tmp_path):
+    client = _make_client_with_real_auth(tmp_path)
+    response = client.get("/api/admin/runway/health")
+    assert response.status_code == 200
+    assert response.json() == {"ok": True}
+
+
+def test_get_environment_detail_401_without_auth(tmp_path):
+    client = _make_client_with_real_auth(tmp_path)
+    response = client.get("/api/admin/runway/environments/preview")
+    assert response.status_code == 401
