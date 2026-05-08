@@ -6,6 +6,8 @@ build-backend = "hatchling.build"
 name = "kv-runway"
 version = "0.1.0"
 description = "Deployment/promotion/environments engine for Claude Code"
+readme = "README.md"
+license = {file = "LICENSE"}
 requires-python = ">=3.11"
 dependencies = [
     "portalocker==3.2.0",
@@ -20,8 +22,11 @@ dependencies = [
 dev = [
     "pytest==9.0.3",
     "pytest-cov==7.1.0",
-    "httpx==0.28.1",
 ]
+
+[project.urls]
+Homepage = "https://github.com/kvegerano/kv-runway"
+Repository = "https://github.com/kvegerano/kv-runway"
 
 [tool.hatch.build.targets.wheel]
 packages = ["runway"]

@@ -11,3 +11,6 @@ build/
 .env
 .env.*
 .env*.local
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
